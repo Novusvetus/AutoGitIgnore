@@ -1,0 +1,19 @@
+{
+    "name": "novusvetus/autogitignore",
+    "description": "A post-update-cmd script to automatically add Composer managed packages to .gitignore",
+    "authors": [
+        {
+            "name": "Novusvetus / Marcel Rudolf, Germany",
+            "email": "development@novusvetus.de"
+        }
+    ],
+    "require": {
+        "composer/composer": "*",
+        "novusvetus/classhelper": "1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Novusvetus\\AutoGitIgnore\\": "src/"
+        }
+    }
+}
