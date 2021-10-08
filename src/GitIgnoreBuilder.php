@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of AutoGitIgnore.
@@ -26,7 +26,7 @@ class GitIgnoreBuilder extends ClassHelper
      *
      * @return bool Returns false, when there was an error
      */
-    public static function Go(Event $event)
+    public static function go(Event $event): bool
     {
         $event->getIO()->writeError('<info>Updating .gitignore: </info>', false);
 
@@ -68,11 +68,19 @@ class GitIgnoreBuilder extends ClassHelper
             // the package is not in the list of require-dev
             // OR is set in the list of require packages
             // before skipping.
-            if ($devRequires && (!in_array($package->getName(), $devRequires) || in_array($package->getName(), $requires))) {
+            if (
+                $devRequires && (
+                    !in_array($package->getName(), $devRequires) ||
+                    in_array($package->getName(), $requires)
+                )
+            ) {
                 continue;
             }
             $path = $installManager->getInstallPath($package);
-            $packages[] = '/' . preg_replace('~^' . preg_quote(str_replace('\\', '/', getcwd()) . '/') . '~', '', str_replace('\\', '/', realpath($path))) . '/';
+            $packages[] = '/' . preg_replace(
+                    '~^' . preg_quote(str_replace('\\', '/', getcwd()) . '/') . '~',
+                    '', str_replace('\\', '/', realpath($path))
+                ) . '/';
         }
 
         $packages = array_unique($packages);

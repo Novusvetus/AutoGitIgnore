@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of AutoGitIgnore.
@@ -22,46 +22,41 @@ use Novusvetus\ClassHelper\ClassHelper;
 class GitIgnoreFile extends ClassHelper
 {
     /**
-     * Full path to the .gitignore file
-     *
-     * @var string
-     */
-    private $filePath;
-
-    /**
-     * Array containing all lines of the current .gitgnore file
-     *
-     * @var array
-     */
-    private $fileContent = array();
-
-    /**
-     * This identifies the position of the auto generated .gitignore lines
-     *
-     * @var int
-     */
-    private $afterLine;
-
-    /**
      * Git comment marking the start of the auto generated lines
      *
      * @var string
      */
     protected $startMarker = '# AUTOGITIGNORE START - Do not modify here';
-
     /**
      * Git comment marking the end of the auto generated lines
      *
      * @var string
      */
     protected $endMarker = '# AUTOGITIGNORE END';
-
     /**
      * The paths to set in the file
      *
      * @var array
      */
     protected $lines = array();
+    /**
+     * Full path to the .gitignore file
+     *
+     * @var string
+     */
+    private $filePath;
+    /**
+     * Array containing all lines of the current .gitgnore file
+     *
+     * @var array
+     */
+    private $fileContent = array();
+    /**
+     * This identifies the position of the auto generated .gitignore lines
+     *
+     * @var int
+     */
+    private $afterLine;
 
     /**
      * Constructor
@@ -80,13 +75,43 @@ class GitIgnoreFile extends ClassHelper
      *
      * @return self
      */
-    public function setFile($filePath = '.gitignore')
+    public function setFile($filePath = '.gitignore'): GitIgnoreFile
     {
         $this->fileContent = array();
         $this->afterLine = null;
         $this->filePath = $filePath;
         $this->checkPermissions();
         $this->parse();
+
+        return $this;
+    }
+
+    /**
+     * Permission check
+     *
+     * @return self
+     * @throws AutoGitIgnorePermissionException
+     *
+     */
+    protected function checkPermissions(): GitIgnoreFile
+    {
+        $file = $this->getFile();
+        if (!file_exists($file)) {
+            if (!is_writable(dirname($file))) {
+                throw ClassHelper::create(
+                    AutoGitIgnorePermissionException::class,
+                    'You don\'t have the permissions to create ' . $file . '.'
+                );
+            }
+            touch($file);
+        } elseif (!is_writable($file)) {
+            throw ClassHelper::create(
+                AutoGitIgnorePermissionException::class,
+                'You don\'t have the permissions to edit ' . $file . '.'
+            );
+        }
+
+        return $this;
     }
 
     /**
@@ -94,41 +119,19 @@ class GitIgnoreFile extends ClassHelper
      *
      * @return string
      */
-    public function getFile()
+    public function getFile(): string
     {
         return $this->filePath;
     }
 
     /**
-     * Permission check
-     *
-     * @throws AutoGitIgnorePermissionException
-     *
-     * @return self
-     */
-    protected function checkPermissions()
-    {
-        $file = $this->getFile();
-        if (!file_exists($file)) {
-            if (!is_writable(dirname($file))) {
-                throw ClassHelper::create('AutoGitIgnorePermissionException', 'You don\'t have the permissions to create ' . $file . '.');
-            }
-            touch($file);
-        } elseif (!is_writable($file)) {
-            throw ClassHelper::create('AutoGitIgnorePermissionException', 'You don\'t have the permissions to edit ' . $file . '.');
-        }
-
-        return $this;
-    }
-
-    /**
      * Loads the .gitignore file and parses it.
      *
+     * @return self
      * @throws AutoGitIgnoreParseException
      *
-     * @return self
      */
-    protected function parse()
+    protected function parse(): GitIgnoreFile
     {
         $fileContent = file($this->getFile(), FILE_IGNORE_NEW_LINES);
 
@@ -137,17 +140,26 @@ class GitIgnoreFile extends ClassHelper
         foreach ($fileContent as $line) {
             if ($line == $this->startMarker) {
                 if ($open) {
-                    throw ClassHelper::create('AutoGitIgnoreParserException', 'There are two openings in this file.');
+                    throw ClassHelper::create(
+                        AutoGitIgnoreParserException::class,
+                        'There are two openings in this file.'
+                    );
                 } else {
                     if ($found) {
-                        throw ClassHelper::create('AutoGitIgnoreParserException', 'There are two blocks in this file.');
+                        throw ClassHelper::create(
+                            AutoGitIgnoreParserException::class,
+                            'There are two blocks in this file.'
+                        );
                     } else {
                         $open = true;
                     }
                 }
             } elseif ($line == $this->endMarker) {
                 if (!$open) {
-                    throw ClassHelper::create('AutoGitIgnoreParserException', 'The line ending is before the start.');
+                    throw ClassHelper::create(
+                        AutoGitIgnoreParserException::class,
+                        'The line ending is before the start.'
+                    );
                 } else {
                     $found = true;
                     $open = false;
@@ -174,7 +186,7 @@ class GitIgnoreFile extends ClassHelper
      *
      * @return self
      */
-    public function setLines($lines)
+    public function setLines($lines): GitIgnoreFile
     {
         if (!is_array($lines)) {
             $this->lines = array(
@@ -190,14 +202,17 @@ class GitIgnoreFile extends ClassHelper
     /**
      * Save to the .gitinore file
      *
+     * @return self
      * @throws AutoGitIgnoreSaveException
      *
-     * @return self
      */
-    public function save()
+    public function save(): GitIgnoreFile
     {
         if ($this->afterLine === null) {
-            throw ClassHelper::create('AutoGitIgnoreSaveException', 'No file loaded.');
+            throw ClassHelper::create(
+                AutoGitIgnoreSaveException::class,
+                'No file loaded.'
+            );
         }
 
         $output = array();
@@ -223,7 +238,10 @@ class GitIgnoreFile extends ClassHelper
         }
 
         if (!file_put_contents($this->getFile(), implode(PHP_EOL, $output))) {
-            throw ClassHelper::create('AutoGitIgnoreSaveException', 'Saving to ' . $this->getFile() . ' failed.');
+            throw ClassHelper::create(
+                AutoGitIgnoreSaveException::class,
+                'Saving to ' . $this->getFile() . ' failed.'
+            );
         }
 
         return $this;
