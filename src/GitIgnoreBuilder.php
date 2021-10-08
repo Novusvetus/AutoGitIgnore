@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of AutoGitIgnore.
@@ -26,7 +26,7 @@ class GitIgnoreBuilder extends ClassHelper
      *
      * @return bool Returns false, when there was an error
      */
-    public static function Go(Event $event)
+    public static function Go(Event $event): bool
     {
         $event->getIO()->writeError('<info>Updating .gitignore: </info>', false);
 
