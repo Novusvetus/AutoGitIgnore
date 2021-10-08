@@ -5,7 +5,7 @@ A post-update-cmd script to automatically add Composer managed packages to .giti
 ### Add the following to your composer.json
 ```json
 "scripts": {
-    "post-update-cmd": "Novusvetus\\AutoGitIgnore\\GitIgnoreBuilder::Go"
+    "post-update-cmd": "Novusvetus\\AutoGitIgnore\\GitIgnoreBuilder::go"
 }
 ```
 ### Add it to your project with:

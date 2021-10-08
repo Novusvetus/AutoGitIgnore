@@ -98,11 +98,17 @@ class GitIgnoreFile extends ClassHelper
         $file = $this->getFile();
         if (!file_exists($file)) {
             if (!is_writable(dirname($file))) {
-                throw ClassHelper::create(AutoGitIgnorePermissionException::class, 'You don\'t have the permissions to create ' . $file . '.');
+                throw ClassHelper::create(
+                    AutoGitIgnorePermissionException::class,
+                    'You don\'t have the permissions to create ' . $file . '.'
+                );
             }
             touch($file);
         } elseif (!is_writable($file)) {
-            throw ClassHelper::create(AutoGitIgnorePermissionException::class, 'You don\'t have the permissions to edit ' . $file . '.');
+            throw ClassHelper::create(
+                AutoGitIgnorePermissionException::class,
+                'You don\'t have the permissions to edit ' . $file . '.'
+            );
         }
 
         return $this;
@@ -134,17 +140,26 @@ class GitIgnoreFile extends ClassHelper
         foreach ($fileContent as $line) {
             if ($line == $this->startMarker) {
                 if ($open) {
-                    throw ClassHelper::create(AutoGitIgnoreParserException::class, 'There are two openings in this file.');
+                    throw ClassHelper::create(
+                        AutoGitIgnoreParserException::class,
+                        'There are two openings in this file.'
+                    );
                 } else {
                     if ($found) {
-                        throw ClassHelper::create(AutoGitIgnoreParserException::class, 'There are two blocks in this file.');
+                        throw ClassHelper::create(
+                            AutoGitIgnoreParserException::class,
+                            'There are two blocks in this file.'
+                        );
                     } else {
                         $open = true;
                     }
                 }
             } elseif ($line == $this->endMarker) {
                 if (!$open) {
-                    throw ClassHelper::create(AutoGitIgnoreParserException::class, 'The line ending is before the start.');
+                    throw ClassHelper::create(
+                        AutoGitIgnoreParserException::class,
+                        'The line ending is before the start.'
+                    );
                 } else {
                     $found = true;
                     $open = false;
@@ -194,7 +209,10 @@ class GitIgnoreFile extends ClassHelper
     public function save(): GitIgnoreFile
     {
         if ($this->afterLine === null) {
-            throw ClassHelper::create(AutoGitIgnoreSaveException::class, 'No file loaded.');
+            throw ClassHelper::create(
+                AutoGitIgnoreSaveException::class,
+                'No file loaded.'
+            );
         }
 
         $output = array();
@@ -220,7 +238,10 @@ class GitIgnoreFile extends ClassHelper
         }
 
         if (!file_put_contents($this->getFile(), implode(PHP_EOL, $output))) {
-            throw ClassHelper::create(AutoGitIgnoreSaveException::class, 'Saving to ' . $this->getFile() . ' failed.');
+            throw ClassHelper::create(
+                AutoGitIgnoreSaveException::class,
+                'Saving to ' . $this->getFile() . ' failed.'
+            );
         }
 
         return $this;
