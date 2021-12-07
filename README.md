@@ -25,6 +25,7 @@ composer require novusvetus/autogitignore
 }
 ```
 
+
 ## License ##
 3-clause BSD license
 See [License](LICENSE)
@@ -35,9 +36,9 @@ Bugs are tracked in the issues section of this repository on GitHub.
 Please read over existing issues before submitting an issue to ensure yours is unique.
 
 [Create a new issue](../../issues/new)
-- Describe the steps to reproduce your issue.
-- Describe the expected and the actual outcome.
-- Describe your environment as detailed as possible.
+ - Describe the steps to reproduce your issue.
+ - Describe the expected and the actual outcome.
+ - Describe your environment as detailed as possible.
 
 
 ## Development and contribution ##
@@ -55,12 +56,12 @@ This project follows [Semantic Versioning](http://semver.org) paradigm. That is:
 > Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 
+## Thanks to ##
+* [mickaelperrin / Mickaël PERRIN](https://github.com/mickaelperrin)
+
+
 ## Links ##
 * [ReindeerWeb](https://www.reindeer-web.de)
 * [Novusvetus](https://www.novusvetus.de)
 * [License](./LICENSE)
 * [Contributing](./CONTRIBUTING.md)
-
-
-## Thanks to ##
-* [mickaelperrin / Mickaël PERRIN](https://github.com/mickaelperrin)
